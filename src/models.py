@@ -36,3 +36,12 @@ class LogAnalysis(BaseModel):
     confidence: float = Field(
         description="Confidence in this analysis, from 0.0 to 1.0.", ge=0.0, le=1.0
     )
+
+class CommitInfo(BaseModel):
+    """A single GitHub commit, trimmed to what's useful for RCA."""
+
+    sha: str = Field(description="Short commit SHA (7 chars)")
+    author: str
+    message: str = Field(description="First line of the commit message")
+    date: str = Field(description="ISO 8601 commit timestamp")
+    url: str = Field(description="Link to the commit on GitHub")
