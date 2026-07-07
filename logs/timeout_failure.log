@@ -1,0 +1,18 @@
+[2026-07-06 18:05:00] Starting CI pipeline for branch feature/bulk-import
+[2026-07-06 18:05:01] Checking out commit d02c7ab "Add bulk CSV import endpoint"
+[2026-07-06 18:05:03] Installing dependencies from requirements.txt... done
+[2026-07-06 18:05:19] Running integration tests: pytest -v tests/integration/
+
+tests/integration/test_bulk_import.py::test_import_10k_rows
+
+[2026-07-06 18:10:19] ERROR: Test exceeded timeout of 300s
+[2026-07-06 18:10:19] Killing process (PID 8821)...
+
+Captured log:
+INFO:app.importer:Processing row 1..1000
+INFO:app.importer:Processing row 1000..2000
+INFO:app.importer:Processing row 2000..3000
+(no further log output — process appears stalled after row 3000)
+
+[2026-07-06 18:10:20] Build step 'Integration Tests' marked as FAILURE (TIMEOUT)
+[2026-07-06 18:10:20] Pipeline finished: FAILURE

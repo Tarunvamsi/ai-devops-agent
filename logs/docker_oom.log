@@ -1,0 +1,24 @@
+[2026-07-06 14:22:00] Starting CI pipeline for branch main
+[2026-07-06 14:22:01] Checking out commit c91a4de "Bump base image to node:20"
+[2026-07-06 14:22:02] Building Docker image: docker build -t app:latest .
+
+Step 1/12 : FROM node:20-slim
+Step 2/12 : WORKDIR /app
+Step 3/12 : COPY package*.json ./
+Step 4/12 : RUN npm ci
+ ---> Running in 4f2a9b1c3d5e
+npm WARN deprecated ...
+Step 5/12 : COPY . .
+Step 6/12 : RUN npm run build
+
+> app@1.0.0 build
+> webpack --mode production
+
+<--- Last few GCs --->
+[124:0x55f3a2b1c000]    82134 ms: Mark-sweep 3986.2 (4096.0) -> 3980.1 (4096.0) MB
+<--- JS stacktrace --->
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+
+The command '/bin/sh -c npm run build' returned a non-zero code: 134
+[2026-07-06 14:25:47] Build step 'Docker Build' marked as FAILURE
+[2026-07-06 14:25:47] Pipeline finished: FAILURE

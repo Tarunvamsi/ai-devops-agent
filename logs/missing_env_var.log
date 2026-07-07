@@ -1,0 +1,15 @@
+[2026-07-06 16:40:05] Starting CI pipeline for branch feature/payments-webhook
+[2026-07-06 16:40:06] Checking out commit e5f8b21 "Add Stripe webhook handler"
+[2026-07-06 16:40:08] Installing dependencies from requirements.txt... done
+[2026-07-06 16:40:20] Running application startup checks...
+
+Traceback (most recent call last):
+  File "/app/main.py", line 14, in <module>
+    stripe.api_key = os.environ["STRIPE_SECRET_KEY"]
+  File "/usr/lib/python3.11/os.py", line 680, in __getitem__
+    raise KeyError(key) from None
+KeyError: 'STRIPE_SECRET_KEY'
+
+[2026-07-06 16:40:20] Application failed to start (exit code 1)
+[2026-07-06 16:40:20] Build step 'Startup Health Check' marked as FAILURE
+[2026-07-06 16:40:20] Pipeline finished: FAILURE

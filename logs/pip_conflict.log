@@ -1,0 +1,23 @@
+[2026-07-06 10:03:11] Starting CI pipeline for branch feature/add-pandas-export
+[2026-07-06 10:03:12] Checking out commit 7bd21f0 "Add CSV export via pandas"
+[2026-07-06 10:03:14] Installing dependencies from requirements.txt...
+
+Collecting pandas==2.2.0
+Collecting numpy==1.21.0
+Collecting scipy==1.13.0
+
+ERROR: Cannot install -r requirements.txt (line 4) and numpy==1.21.0 because these package versions have conflicting dependencies.
+
+The conflict is caused by:
+    The user requested numpy==1.21.0
+    pandas 2.2.0 depends on numpy>=1.26.0
+    scipy 1.13.0 depends on numpy>=1.23.5
+
+To fix this you could try to:
+1. loosen the range of package versions you've specified
+2. remove package versions to allow pip to attempt to solve the dependency conflict
+
+ERROR: ResolutionImpossible
+
+[2026-07-06 10:03:19] Build step 'Install Dependencies' marked as FAILURE
+[2026-07-06 10:03:19] Pipeline finished: FAILURE

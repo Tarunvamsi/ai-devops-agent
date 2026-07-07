@@ -1,0 +1,34 @@
+[2026-07-06 09:12:01] Starting CI pipeline for branch feature/user-auth
+[2026-07-06 09:12:03] Checking out commit a3f5c9e "Add JWT token refresh logic"
+[2026-07-06 09:12:05] Installing dependencies from requirements.txt... done
+[2026-07-06 09:12:22] Running test suite: pytest -v tests/
+=========================== test session starts ============================
+collected 42 items
+
+tests/test_auth.py::test_login_success PASSED
+tests/test_auth.py::test_login_invalid_password PASSED
+tests/test_auth.py::test_token_refresh FAILED
+tests/test_auth.py::test_logout PASSED
+
+=================================== FAILURES ===================================
+___________________________ test_token_refresh _________________________________
+
+    def test_token_refresh():
+        client = TestClient(app)
+        response = client.post("/auth/refresh", json={"refresh_token": VALID_TOKEN})
+>       assert response.status_code == 200
+E       assert 500 == 200
+E        +  where 500 = <Response [500]>.status_code
+
+tests/test_auth.py:47: AssertionError
+
+----------------------------- Captured stdout call -----------------------------
+ERROR:app.auth:Exception in refresh_token: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/app/app/auth.py", line 88, in refresh_token
+    user_id = payload.get("sub")
+AttributeError: 'NoneType' object has no attribute 'get'
+
+======================== 1 failed, 41 passed in 4.21s ========================
+[2026-07-06 09:12:27] Build step 'Run Tests' marked as FAILURE
+[2026-07-06 09:12:27] Pipeline finished: FAILURE
