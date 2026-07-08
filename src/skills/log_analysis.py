@@ -5,12 +5,18 @@ Analyzes a CI/build failure log and returns a structured root-cause
 analysis. This is the exact logic from Step 0, just relocated so it
 has a clean importable function signature — this is what makes it a
 "skill" instead of a script.
+
+Includes its own retry/backoff on transient Gemini 503s, since this
+skill makes its own independent LLM call — it can fail even when the
+calling agent's own model call succeeds.
 """
 
 import os
 import sys
+import time
 
 from google import genai
+from google.genai import errors as genai_errors
 
 from models import LogAnalysis
 
@@ -30,13 +36,15 @@ lower your confidence score accordingly. Do not bluff.
 """
 
 
-def read_log(log_text: str, model: str = "gemini-2.5-flash") -> LogAnalysis:
+def read_log(log_text: str, model: str = "gemini-2.5-flash-lite", max_retries: int = 3) -> LogAnalysis:
     """
     Skill: analyze a raw CI log and return a structured LogAnalysis.
 
     Args:
         log_text: full text content of the log file
-        model: Gemini model name
+        model: Gemini model name (default is the lighter flash-lite model,
+            which tends to have more free-tier headroom than plain flash)
+        max_retries: retries on transient Gemini server errors (503s)
 
     Returns:
         LogAnalysis (see models.py)
@@ -48,13 +56,22 @@ def read_log(log_text: str, model: str = "gemini-2.5-flash") -> LogAnalysis:
 
     client = genai.Client(api_key=api_key)
 
-    response = client.models.generate_content(
-        model=model,
-        contents=f"{SYSTEM_PROMPT}\n\nAnalyze this CI pipeline log and return the RCA:\n\n{log_text}",
-        config={
-            "response_mime_type": "application/json",
-            "response_schema": LogAnalysis,
-        },
-    )
+    last_error = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = client.models.generate_content(
+                model=model,
+                contents=f"{SYSTEM_PROMPT}\n\nAnalyze this CI pipeline log and return the RCA:\n\n{log_text}",
+                config={
+                    "response_mime_type": "application/json",
+                    "response_schema": LogAnalysis,
+                },
+            )
+            return response.parsed
+        except genai_errors.ServerError as e:
+            last_error = e
+            wait = 2 ** attempt
+            print(f"    [read_log] Gemini server error (attempt {attempt}/{max_retries}), retrying in {wait}s...")
+            time.sleep(wait)
 
-    return response.parsed
+    raise last_error

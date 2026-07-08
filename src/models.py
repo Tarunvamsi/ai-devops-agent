@@ -37,6 +37,7 @@ class LogAnalysis(BaseModel):
         description="Confidence in this analysis, from 0.0 to 1.0.", ge=0.0, le=1.0
     )
 
+
 class CommitInfo(BaseModel):
     """A single GitHub commit, trimmed to what's useful for RCA."""
 
@@ -45,3 +46,11 @@ class CommitInfo(BaseModel):
     message: str = Field(description="First line of the commit message")
     date: str = Field(description="ISO 8601 commit timestamp")
     url: str = Field(description="Link to the commit on GitHub")
+
+
+class DocChunk(BaseModel):
+    """A retrieved chunk of documentation from the RAG index."""
+
+    text: str = Field(description="The doc chunk content")
+    source: str = Field(description="Filename the chunk came from")
+    score: float = Field(description="Distance score (lower = more relevant)")
